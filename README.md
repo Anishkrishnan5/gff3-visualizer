@@ -8,11 +8,11 @@ In genomics research, predicted gene structures are typically evaluated against 
 
 This tool parses GFF3 annotations into a hierarchical model (**gene → transcript → exon/CDS**), compares **predicted vs ground-truth gene structures**, and renders a clear visual representation of their structural differences.
 
-The MVP deliberately focuses on **single-gene or localized region analysis** to prioritize interpretability and correctness over genome-scale complexity.
+This tool deliberately focuses on **single-gene or localized region analysis** to prioritize interpretability and correctness over genome-scale complexity.
 
 ---
 
-## Key Features (MVP)
+## Key Features
 
 ### GFF3 Parsing
 - Supports `gene`, `mRNA` / `transcript`, `exon`, and `CDS` features
