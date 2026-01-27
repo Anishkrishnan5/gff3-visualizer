@@ -80,33 +80,34 @@ gff3-visualizer/
 │
 ├── backend/
 │   ├── app/
-│   │   ├── main.py              # FastAPI entry point
+│   │   ├── main.py              
 │   │   ├── api/
-│   │   │   └── routes.py        # API endpoints
+│   │   │   └── routes.py
 │   │   ├── parsing/
-│   │   │   ├── gff3_parser.py   # GFF3 parsing logic
-│   │   │   └── models.py        # Gene / Transcript / Exon classes
+│   │   │   ├── gff3_parser.py
+│   │   │   └── models.py
 │   │   ├── comparison/
-│   │   │   ├── align.py         # Transcript matching logic
-│   │   │   └── metrics.py       # Overlap / comparison metrics
+│   │   │   ├── align.py
+│   │   │   └── metrics.py
 │   │   ├── schemas/
-│   │   │   └── response.py      # API response schemas
+│   │   │   └── response.py
 │   │   └── utils/
-│   │       └── helpers.py       # Shared utilities
+│   │       └── helpers.py
 │   │
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── README.md
 │
 ├── frontend/
-│   ├── index.html               # Main UI
-│   ├── styles.css               # Minimal styling
-│   ├── app.js                   # Frontend logic / API calls
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
 │   └── viz/
-│       └── geneViz.js           # D3 visualization logic
+│       └── geneViz.js
 │
 ├── data/
 │   └── examples/
 │       ├── reference.gff3
 │       └── predicted.gff3
 │
-├── README.md
-└── .gitignore
+├── .gitignore
+└── README.md
