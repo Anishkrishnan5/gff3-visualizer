@@ -65,8 +65,7 @@ Comparing predicted annotations to reference gene structures using raw GFF3 file
 ### Backend
 - Python
 - FastAPI
-- Custom GFF3 parsing and comparison logic
-
+- 
 ### Frontend
 - HTML / CSS
 - D3.js for data-driven visualization
