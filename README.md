@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a lightweight tool for **visualizing and comparing gene structures encoded in GFF3 files**, with a focus on **debugging gene prediction models**.
+This project is a tool for **visualizing and comparing gene structures encoded in GFF3 files**, with a focus on **debugging gene prediction models**.
 
 In genomics research, predicted gene structures are typically evaluated against reference annotations stored in GFF3 format. While GFF3 is expressive, it is difficult to reason about differences directly from raw files—especially when comparing exon boundaries, alternative splicing, or partial overlaps.
 
