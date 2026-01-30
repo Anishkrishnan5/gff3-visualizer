@@ -25,6 +25,7 @@ def parse_gff3(filepath: str) -> dict:
 
     # Temporary storage
     transcript_to_gene = {}
+    transcript_metadata = {}  # Store chrom/strand for transcripts (for geneID-based genes)
     exon_buffer = defaultdict(list)
 
     with open(filepath, "r") as f:
@@ -51,12 +52,15 @@ def parse_gff3(filepath: str) -> dict:
 
             elif feature_type in ("mRNA", "transcript"):
                 tx_id = attr_dict.get("ID")
-                parent_gene = attr_dict.get("Parent")
+                # Support both Parent (standard) and geneID (alternative format)
+                parent_gene = attr_dict.get("Parent") or attr_dict.get("geneID")
 
                 if tx_id and parent_gene:
                     transcript = Transcript(tx_id)
                     transcripts[tx_id] = transcript
                     transcript_to_gene[tx_id] = parent_gene
+                    # Store metadata for creating genes from geneID
+                    transcript_metadata[tx_id] = {"chrom": chrom, "strand": strand}
 
             elif feature_type in ("exon", "CDS"):
                 parent_tx = attr_dict.get("Parent")
@@ -70,6 +74,17 @@ def parse_gff3(filepath: str) -> dict:
             for exon in exons:
                 transcripts[tx_id].add_exon(exon)
             transcripts[tx_id].sort_exons()
+
+    # Create genes from geneID if they don't exist (for files without gene features)
+    for tx_id, gene_id in transcript_to_gene.items():
+        if gene_id not in genes and tx_id in transcript_metadata:
+            # Create gene from transcript metadata
+            metadata = transcript_metadata[tx_id]
+            genes[gene_id] = Gene(
+                gene_id=gene_id,
+                chrom=metadata["chrom"],
+                strand=metadata["strand"]
+            )
 
     # Link transcripts → genes
     for tx_id, gene_id in transcript_to_gene.items():
