@@ -2,7 +2,7 @@ from typing import Any
 
 from app.parsing.gff3_parser import parse_gff3
 
-genes = parse_gff3("data/examples/Cylto1_FilteredModels1.gff3")
+genes = parse_gff3("data/examples/Cylto1__FilteredModels1.gff3")
 
 print(f"Parsed {len(genes)} genes")
 
