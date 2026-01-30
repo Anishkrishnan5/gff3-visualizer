@@ -2,13 +2,11 @@
 
 ## Overview
 
-This project is a lightweight tool for **visualizing and comparing gene structures encoded in GFF3 files**, with a focus on **debugging gene prediction models**.
+This project is a tool for **visualizing and comparing gene structures encoded in GFF3 files**, with a focus on **debugging gene prediction models**.
 
 In genomics research, predicted gene structures are typically evaluated against reference annotations stored in GFF3 format. While GFF3 is expressive, it is difficult to reason about differences directly from raw files—especially when comparing exon boundaries, alternative splicing, or partial overlaps.
 
 This tool parses GFF3 annotations into a hierarchical model (**gene → transcript → exon/CDS**), compares **predicted vs ground-truth gene structures**, and renders a clear visual representation of their structural differences.
-
-This tool deliberately focuses on **single-gene or localized region analysis** to prioritize interpretability and correctness over genome-scale complexity.
 
 ---
 
@@ -40,23 +38,6 @@ This tool deliberately focuses on **single-gene or localized region analysis** t
 - Upload reference and predicted GFF3 files
 - Select a gene ID or coordinate range
 - Render data-driven visualizations using **D3.js**
-
----
-
-## Motivation
-
-This tool was initially built to support research on **fine-tuning Tiberius, a deep learning-based model that can predict animal gene structure, to be able to support fungal gene structure prediction**.
-
-Comparing predicted annotations to reference gene structures using raw GFF3 files proved slow and error-prone, motivating the need for a focused visualization and comparison tool designed specifically for **model debugging and error analysis**.
-
----
-
-## Design Philosophy
-
-- **Deliberately constrained scope** for clarity and correctness
-- **Separation of concerns** between parsing, comparison logic, and visualization
-- **Human interpretability first**: visuals over tables, structure over aggregate metrics
-- **Extensible architecture** to support future evaluation and batch analysis
 
 ---
 
