@@ -47,7 +47,9 @@ def parse_gff3(filepath: str) -> dict:
                     genes[gene_id] = Gene(
                         gene_id=gene_id,
                         chrom=chrom,
-                        strand=strand
+                        strand=strand,
+                        start=start,
+                        end=end
                     )
 
             elif feature_type in ("mRNA", "transcript"):
@@ -78,7 +80,7 @@ def parse_gff3(filepath: str) -> dict:
     # Create genes from geneID if they don't exist (for files without gene features)
     for tx_id, gene_id in transcript_to_gene.items():
         if gene_id not in genes and tx_id in transcript_metadata:
-            # Create gene from transcript metadata
+            # Create gene from transcript metadata (start/end will be calculated later)
             metadata = transcript_metadata[tx_id]
             genes[gene_id] = Gene(
                 gene_id=gene_id,
@@ -90,5 +92,9 @@ def parse_gff3(filepath: str) -> dict:
     for tx_id, gene_id in transcript_to_gene.items():
         if gene_id in genes and tx_id in transcripts:
             genes[gene_id].add_transcript(transcripts[tx_id])
+    
+    # Calculate gene bounds for genes that don't have explicit start/end
+    for gene in genes.values():
+        gene.calculate_bounds()
 
     return genes
