@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GFF3 Visualizer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>GFF3 Gene Structure Comparison</h2>
+
+    <div class="upload-section">
+      <input type="file" id="refFile" />
+      <label for="refFile">Reference GFF3 File</label>
+      
+      <input type="file" id="predFile" />
+      <label for="predFile">Predicted GFF3 File</label>
+      
+      <button id="runBtn">Compare Files</button>
+      <div id="loading-message" style="display: none; margin-top: 10px; color: #667eea; font-weight: 600;">
+        Processing... This may take a moment.
+      </div>
+    </div>
+
+    <div id="stats-section" style="display: none;">
+      <h3>Overall Comparison Statistics</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="total-matches">0</div>
+          <div class="stat-label">Total Gene Matches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="avg-overlap">0%</div>
+          <div class="stat-label">Average Overlap</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="perfect-matches">0</div>
+          <div class="stat-label">Perfect Matches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="significant-diffs">0</div>
+          <div class="stat-label">Significant Differences</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="gene-categories" style="display: none;">
+      <div class="category-section">
+        <h3>Perfect Matches <span class="count-badge" id="perfect-count">0</span></h3>
+        <p class="category-desc">Genes with no non-overlapping regions</p>
+        <select id="perfect-select" class="gene-select">
+          <option value="">-- Select a gene --</option>
+        </select>
+      </div>
+
+      <div class="category-section">
+        <h3>Reasonable Overlaps <span class="count-badge" id="reasonable-count">0</span></h3>
+        <p class="category-desc">Genes with some differences but &lt;30% non-overlap</p>
+        <select id="reasonable-select" class="gene-select">
+          <option value="">-- Select a gene --</option>
+        </select>
+      </div>
+
+      <div class="category-section highlight">
+        <h3>Significant Differences <span class="count-badge" id="significant-count">0</span></h3>
+        <p class="category-desc">Genes with ≥30% non-overlap - review these!</p>
+        <select id="significant-select" class="gene-select">
+          <option value="">-- Select a gene --</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="visualization-section" style="display: none;">
+      <h3 id="selected-gene-title">Gene Comparison</h3>
+      <div class="gene-info" id="gene-info"></div>
+      <svg id="viz" width="1200" height="600"></svg>
+    </div>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="app.js"></script>
+  <script src="viz/geneViz.js"></script>
+</body>
+</html>
