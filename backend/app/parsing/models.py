@@ -9,8 +9,10 @@ class Exon:
 
 
 class Transcript:
-    def __init__(self, transcript_id: str):
+    def __init__(self, transcript_id: str, chrom: str, strand: str):
         self.id = transcript_id
+        self.chrom = chrom
+        self.strand = strand
         self.exons = []
 
     def add_exon(self, exon: Exon):
@@ -18,6 +20,14 @@ class Transcript:
 
     def sort_exons(self):
         self.exons.sort(key=lambda e: e.start)
+
+    @property
+    def start(self):
+        return min(e.start for e in self.exons) if self.exons else None
+
+    @property
+    def end(self):
+        return max(e.end for e in self.exons) if self.exons else None
 
 
 class Gene:
