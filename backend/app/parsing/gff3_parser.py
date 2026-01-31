@@ -52,13 +52,13 @@ def parse_gff3(filepath: str) -> dict:
                         end=end
                     )
 
-            elif feature_type in ("mRNA", "transcript"):
+            elif feature_type == "exon":
                 tx_id = attr_dict.get("ID")
                 # Support both Parent (standard) and geneID (alternative format)
                 parent_gene = attr_dict.get("Parent") or attr_dict.get("geneID")
 
                 if tx_id and parent_gene:
-                    transcript = Transcript(tx_id)
+                    transcript = Transcript(tx_id, chrom=chrom, strand=strand)
                     transcripts[tx_id] = transcript
                     transcript_to_gene[tx_id] = parent_gene
                     # Store metadata for creating genes from geneID
@@ -92,7 +92,14 @@ def parse_gff3(filepath: str) -> dict:
     for tx_id, gene_id in transcript_to_gene.items():
         if gene_id in genes and tx_id in transcripts:
             genes[gene_id].add_transcript(transcripts[tx_id])
-    
+
+    # 🚨 ENFORCE BIOLOGICAL CONSISTENCY HERE
+    for gene in genes.values():
+        gene.transcripts = [
+            tx for tx in gene.transcripts
+            if tx.chrom == gene.chrom and tx.strand == gene.strand
+        ]
+
     # Calculate gene bounds for genes that don't have explicit start/end
     for gene in genes.values():
         gene.calculate_bounds()

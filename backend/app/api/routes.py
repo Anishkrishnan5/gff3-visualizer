@@ -1,19 +1,22 @@
 from fastapi import APIRouter, UploadFile, Form
 from fastapi.responses import JSONResponse
 from app.parsing.gff3_parser import parse_gff3
-from app.comparison.align import compare_transcripts
+from app.comparison.align import best_matching_transcript, compare_transcripts
 from app.visualization.plotter import plot_gene_comparison, plot_to_base64, create_overview_plot
 import tempfile
 import os
+import time
+from collections import defaultdict
+
 
 router = APIRouter()
 
-
-def best_reference_transcript(pred_tx, ref_transcripts):
-    """Find the best matching reference transcript for a predicted transcript."""
-    # Simple implementation: return first transcript for now
-    # Can be enhanced with better matching logic
-    return ref_transcripts[0] if ref_transcripts else None
+def index_genes_by_locus(genes):
+    index = defaultdict(list)
+    for gene in genes.values():
+        key = (gene.chrom, gene.strand)
+        index[key].append(gene)
+    return index
 
 
 def serialize_gene(gene):
@@ -42,36 +45,38 @@ def serialize_gene(gene):
 
 
 def find_matching_genes(ref_genes, pred_genes, overlap_threshold=0.5):
-    """
-    Find genes that match by genomic coordinates.
-    Returns a list of tuples: (ref_gene_id, pred_gene_id, overlap_ratio)
-    """
     matches = []
-    for ref_id, ref_gene in ref_genes.items():
-        for pred_id, pred_gene in pred_genes.items():
-            # Check if same chromosome and strand
-            if ref_gene.chrom != pred_gene.chrom or ref_gene.strand != pred_gene.strand:
-                continue
-            
-            # Calculate overlap
-            overlap_start = max(ref_gene.start, pred_gene.start)
-            overlap_end = min(ref_gene.end, pred_gene.end)
-            
-            if overlap_start <= overlap_end:
+
+    ref_index = index_genes_by_locus(ref_genes)
+    pred_index = index_genes_by_locus(pred_genes)
+
+    for key in ref_index:
+        if key not in pred_index:
+            continue
+
+        for ref_gene in ref_index[key]:
+            for pred_gene in pred_index[key]:
+
+                # 🚀 EARLY EXIT — ADD THIS HERE
+                if pred_gene.end < ref_gene.start or pred_gene.start > ref_gene.end:
+                    continue
+
+                overlap_start = max(ref_gene.start, pred_gene.start)
+                overlap_end = min(ref_gene.end, pred_gene.end)
+
                 overlap_length = overlap_end - overlap_start + 1
                 ref_length = ref_gene.end - ref_gene.start + 1
                 pred_length = pred_gene.end - pred_gene.start + 1
-                
-                # Calculate overlap ratio (use minimum to avoid small genes matching large ones)
+
                 overlap_ratio = overlap_length / min(ref_length, pred_length)
-                
+
                 if overlap_ratio >= overlap_threshold:
-                    matches.append((ref_id, pred_id, overlap_ratio))
-    
-    # Sort by overlap ratio (best matches first)
+                    matches.append(
+                        (ref_gene.id, pred_gene.id, overlap_ratio)
+                    )
+
     matches.sort(key=lambda x: x[2], reverse=True)
     return matches
-
 
 @router.post("/parse")
 async def parse_gff3_file(file: UploadFile):
@@ -176,7 +181,7 @@ async def visualize_gene(ref_file: UploadFile, pred_file: UploadFile,
         # Get comparison data
         comparisons = []
         for pred_tx in pred_gene.transcripts:
-            ref_tx = best_reference_transcript(pred_tx, ref_gene.transcripts)
+            ref_tx = best_matching_transcript(pred_tx, ref_gene.transcripts)
             if ref_tx:
                 diff = compare_transcripts(ref_tx, pred_tx)
                 serialized_diff = {

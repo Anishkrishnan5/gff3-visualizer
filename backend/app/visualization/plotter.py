@@ -9,7 +9,6 @@ import numpy as np
 from io import BytesIO
 import base64
 
-
 def plot_gene_comparison(ref_gene, pred_gene, ref_transcripts, pred_transcripts, 
                          comparison_data=None, figsize=(14, 8)):
     """
@@ -26,6 +25,10 @@ def plot_gene_comparison(ref_gene, pred_gene, ref_transcripts, pred_transcripts,
     Returns:
         matplotlib.figure.Figure
     """
+
+    ref_transcripts = ref_transcripts[:5]
+    pred_transcripts = pred_transcripts[:5]
+
     fig, ax = plt.subplots(figsize=figsize)
     
     # Calculate bounds
