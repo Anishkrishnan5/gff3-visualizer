@@ -14,6 +14,7 @@ class Transcript:
         self.chrom = chrom
         self.strand = strand
         self.exons = []
+        self.cds = []
 
     def add_exon(self, exon: Exon):
         self.exons.append(exon)

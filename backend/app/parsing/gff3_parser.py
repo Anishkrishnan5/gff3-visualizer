@@ -52,16 +52,15 @@ def parse_gff3(filepath: str) -> dict:
                         end=end
                     )
 
-            elif feature_type == "exon":
+            elif feature_type in ("mRNA", "transcript"):
                 tx_id = attr_dict.get("ID")
-                # Support both Parent (standard) and geneID (alternative format)
-                parent_gene = attr_dict.get("Parent") or attr_dict.get("geneID")
+                parent_gene = attr_dict.get("Parent")
+                if not parent_gene:
+                    parent_gene = attr_dict.get("geneID")
 
                 if tx_id and parent_gene:
-                    transcript = Transcript(tx_id, chrom=chrom, strand=strand)
-                    transcripts[tx_id] = transcript
+                    transcripts[tx_id] = Transcript(tx_id, chrom=chrom, strand=strand)
                     transcript_to_gene[tx_id] = parent_gene
-                    # Store metadata for creating genes from geneID
                     transcript_metadata[tx_id] = {"chrom": chrom, "strand": strand}
 
             elif feature_type in ("exon", "CDS"):
